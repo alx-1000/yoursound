@@ -143,14 +143,13 @@
                 fill(colorsL.dark[0], colorsL.dark[1], colorsL.dark[2], 140);
                 noStroke();
                 rect(rectLX, rectLY, rectLW, rectLH);
-                // テキスト
+                // NOTEテキストのY座標を長方形の下辺-100に揃える
+                let noteTextY = rectLY + rectLH - 100;
                 fill(0);
                 noStroke();
                 textSize(20);
                 textAlign(CENTER, CENTER);
-                text('OSC' + oscIdx, rectLX + rectLW/2, height/2);
-                textSize(14);
-                text(Math.round(rectLH) + 'Hz', rectLX + rectLW/2, height/2 + 60);
+                text('Note' + oscIdx, rectLX + rectLW/2, noteTextY);
                 // OKボタン（真ん中下）
                 let okButtonX = width/2 - 40;
                 let okButtonY = height - 100;
@@ -214,21 +213,15 @@
             fill(colorsL.dark[0], colorsL.dark[1], colorsL.dark[2], 140);
             noStroke();
             rect(rectLX, rectLY, rectLW, rectLH);
-            // テキスト
+            // テキスト（NOTE表記に変更、周波数・固定値は非表示）
             fill(0);
             noStroke();
             textSize(20);
             textAlign(CENTER, CENTER);
-            text('OSC' + leftOscIdx, width/2 - 200, height/2);
-            textSize(14);
-            text(Math.round(freqL) + 'Hz', width/2 - 200, height/2 + 60);
-            // Phase 1特殊処理：左側は固定
-            if (phase === 1 && leftOscIdx === 1) {
-                textSize(11);
-                textAlign(CENTER, CENTER);
-                fill(100);
-                text('(固定値)', width/2 - 200, height/2 + 90);
-            }
+            // NOTEテキストのY座標を長方形の下辺-100に揃える
+            let leftRectBottom = height/2 + 300;
+            let noteTextY = leftRectBottom - 100;
+            text('Note' + leftOscIdx, width/2 - 200, noteTextY);
 
             // 右側：可変OSC
             let rectRW = 240;
@@ -248,11 +241,11 @@
                 let glowR = getGlowIntensity(rightOscIdx);
                 let colorsR = colors[rightOscIdx];
 
-                // グロー背景
+                // グロー背景（濃い色メーター部分に合わせる）
                 fill(colorsR.light[0], colorsR.light[1], colorsR.light[2], glowR * 150);
                 stroke(colorsR.light[0], colorsR.light[1], colorsR.light[2], glowR * 200);
                 strokeWeight(3 + glowR * 5);
-                rect(rectRX - 5, rectRY - 5, rectRW + 10, rectRH + 10);
+                rect(rectRX - 5, meterBoundaryY - 5, rectRW + 10, (rectRY + rectRH - meterBoundaryY) + 10);
 
                 // 0Hz～現在値より下（濃い色）を1回で描画
                 fill(colorsR.dark[0], colorsR.dark[1], colorsR.dark[2], 140);
@@ -277,11 +270,11 @@
                 let glowR = getGlowIntensity(rightOscIdx);
                 let colorsR = colors[rightOscIdx];
 
-                // グロー背景
+                // グロー背景（濃い色メーター部分に合わせる）
                 fill(colorsR.light[0], colorsR.light[1], colorsR.light[2], glowR * 150);
                 stroke(colorsR.light[0], colorsR.light[1], colorsR.light[2], glowR * 200);
                 strokeWeight(3 + glowR * 5);
-                rect(rectRX - 5, rectRY - 5, rectRW + 10, rectRH + 10);
+                rect(rectRX - 5, meterBoundaryY - 5, rectRW + 10, (rectRY + rectRH - meterBoundaryY) + 10);
 
                 // 濃い色領域（中央～下端＋現在値～中央）を1回で描画
                 fill(colorsR.dark[0], colorsR.dark[1], colorsR.dark[2], 140);
@@ -297,16 +290,10 @@
             noStroke();
             textSize(20);
             textAlign(CENTER, CENTER);
-            text('OSC' + rightOscIdx, width/2 + 200, height/2);
-            textSize(14);
-            text(Math.round(freqR) + 'Hz', width/2 + 200, height/2 + 60);
-
-            // ビート表示
-            fill(0);
-            textSize(12);
-            textAlign(CENTER, BOTTOM);
-            let beatNames = ['Beat 1 (Left)', 'Beat 2 (Right)', 'Beat 3 (Both)', 'Beat 4 (Rest)'];
-            text('BPM: ' + BPM + ' | ' + beatNames[beatIndex], width/2, height - 20);
+            // NOTEテキストのY座標を長方形の下辺-100に揃える
+            let rightRectBottom = height/2 + 300;
+            let noteTextY2 = rightRectBottom - 100;
+            text('Note' + rightOscIdx, width/2 + 200, noteTextY2);
 
             // OKボタン（真ん中下）
             let okButtonX = width/2 - 40;
@@ -368,16 +355,20 @@
                 noStroke();
                 rect(x, y, rectW, rectH);
 
-                // テキスト
+                // テキスト（NOTE表記に変更、周波数は非表示）
                 fill(0);
                 noStroke();
                 textSize(14);
                 textAlign(CENTER, CENTER);
-                text('OSC' + i, x + rectW/2, y + 30);
-                textSize(11);
-                text(Math.round(oscFreq) + 'Hz', x + rectW/2, y + 60);
+                // NOTEテキストのY座標を長方形の下辺-100に揃える
+                let noteTextY = y + rectH - 100;
+                text('Note' + i, x + rectW/2, noteTextY);
+                // 周波数を220で割った値（小数第2位まで）をNOTEの下に表示
+                let ratio = oscFreq / 220;
+                let ratioText = ratio.toFixed(2);
+                textSize(12);
+                text(ratioText, x + rectW/2, noteTextY + 22);
             }
-
             // リセットボタン
             let resetButtonX = width/2 - 50;
             let resetButtonY = height - 100;
@@ -392,19 +383,6 @@
             textSize(16);
             textAlign(CENTER, CENTER);
             text('RESET', width/2, resetButtonY + resetButtonH/2);
-            
-            // ビート表示
-            fill(0);
-            textSize(12);
-            textAlign(CENTER, BOTTOM);
-            let beatIndicator = '';
-            if (beatIndex < melody.length) {
-                beatIndicator = 'Playing OSC' + melody[beatIndex];
-            } else {
-                beatIndicator = 'Finished';
-            }
-            let displayBPM = (phase === 5) ? 120 : 100;
-            text('BPM: ' + displayBPM + ' | ' + beatIndicator, width/2, height - 20);
         }
 
         function getGlowIntensity(oscIdx) {
